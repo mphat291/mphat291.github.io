@@ -38,7 +38,7 @@ const activeNormalized = normalizePath(currentPath);
     </a>
 
     <!-- Desktop Navigation -->
-    <nav class="hidden md:flex items-center gap-0.5 lg:gap-1 rounded-full border border-white/10 bg-slate-950/60 p-1 lg:p-1.5 backdrop-blur-md">
+    <nav class="hidden md:flex items-center gap-1 lg:gap-1.5 rounded-full border border-white/10 bg-slate-950/60 p-1 lg:p-1.5 backdrop-blur-md">
       {siteConfig.navLinks.map((item) => {
         const itemNormalized = normalizePath(item.href);
         const isActive = itemNormalized === '/' 
@@ -49,15 +49,15 @@ const activeNormalized = normalizePath(currentPath);
           <a
             href={item.href}
             class:list={[
-              'relative whitespace-nowrap shrink-0 px-2.5 py-1.5 lg:px-3.5 lg:py-1.5 text-xs font-medium transition-all duration-200 rounded-full inline-flex items-center gap-1.5 border leading-none',
+              'flex items-center gap-2 whitespace-nowrap shrink-0 px-3 py-1.5 lg:px-3.5 lg:py-1.5 text-xs font-medium transition-all duration-200 rounded-full border leading-normal',
               isActive
                 ? 'text-cyan-300 bg-cyan-950/70 border-cyan-500/30 shadow-sm'
                 : 'text-slate-300 border-transparent hover:text-white hover:bg-white/5'
             ]}
           >
-            <span class="whitespace-nowrap">{item.title}</span>
+            <span>{item.title}</span>
             {item.badge && (
-              <span class="inline-flex items-center shrink-0 rounded px-1.5 py-0.5 text-[9px] font-mono font-medium leading-none tracking-wide text-cyan-300 bg-cyan-500/20 border border-cyan-500/30 uppercase">
+              <span class="inline-flex items-center justify-center shrink-0 rounded px-1.5 py-0.5 text-[9px] font-mono font-semibold tracking-wider text-cyan-300 bg-cyan-500/20 border border-cyan-500/35 uppercase leading-none">
                 {item.badge}
               </span>
             )}
@@ -128,18 +128,21 @@ const activeNormalized = normalizePath(currentPath);
           <a
             href={item.href}
             class:list={[
-              'flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors border',
+              'flex items-center justify-between rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors border',
               isActive
                 ? 'bg-cyan-950/60 text-cyan-300 border-cyan-500/30'
                 : 'text-slate-300 border-transparent hover:bg-white/5 hover:text-white'
             ]}
           >
-            <span>{item.title}</span>
-            {item.badge && (
-              <span class="inline-flex items-center shrink-0 rounded bg-cyan-500/20 px-1.5 py-0.5 font-mono text-[10px] font-medium leading-none text-cyan-300 border border-cyan-500/30 uppercase tracking-wide">
-                {item.badge}
-              </span>
-            )}
+            <div class="flex items-center gap-2.5">
+              <span>{item.title}</span>
+              {item.badge && (
+                <span class="inline-flex items-center justify-center shrink-0 rounded bg-cyan-500/20 px-1.5 py-0.5 font-mono text-[10px] font-semibold leading-none text-cyan-300 border border-cyan-500/30 uppercase tracking-wider">
+                  {item.badge}
+                </span>
+              )}
+            </div>
+            <span class="text-xs text-slate-500">→</span>
           </a>
         );
       })}
