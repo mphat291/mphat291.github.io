@@ -49,7 +49,7 @@ export const siteConfig: SiteConfig = {
     role: 'IT Student & Frontend Developer', // Placeholder: Thay đổi theo định hướng nghề nghiệp
     tagline: 'Crafting futuristic, high-performance web applications and exploring AI-driven interfaces.',
     shortBio: 'Sinh viên Công nghệ Thông tin đam mê xây dựng giao diện người dùng trực quan, tối ưu trải nghiệm và khám phá ứng dụng AI trên trình duyệt.',
-    location: 'Vietnam',
+    location: 'Cà Mau, Việt Nam',
     email: 'maphat2911@gmail.com', // Placeholder: Thay bằng email thật của bạn
     githubUrl: 'https://github.com/mphat291', // URL GitHub của chủ sở hữu
     linkedinUrl: 'https://linkedin.com/in/[YOUR_LINKEDIN]', // Placeholder: Link LinkedIn
@@ -136,7 +136,7 @@ export const siteConfig: SiteConfig = {
     {
       year: '2024 - Hiện tại',
       title: 'Sinh viên Công nghệ Thông tin',
-      organization: 'Trường Đại học Bình Dương - TP.HCM',
+      organization: 'Trường Đại học Bình Dương - Phân hiệu Cà Mau',
       description: 'Tập trung nghiên cứu kỹ thuật phần mềm, cấu trúc dữ liệu giải thuật, kiến trúc web hiện đại và xây dựng các dự án mã nguồn mở.',
       badge: 'Đang theo học',
     },
