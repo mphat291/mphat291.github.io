@@ -1,0 +1,78 @@
+---
+import { Calendar, Clock, Tag, ArrowRight } from 'lucide-astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+  category: string;
+  slug: string;
+}
+
+const { title, description, pubDate, tags, category, slug } = Astro.props;
+
+const formattedDate = new Intl.DateTimeFormat('vi-VN', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+}).format(pubDate);
+
+// Approximate read time based on description + default
+const readTime = '4 phút đọc';
+---
+
+<article class="glass-card group flex flex-col justify-between rounded-2xl p-6 transition-all duration-300">
+  <div>
+    <!-- Meta bar -->
+    <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-slate-400 mb-3">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1">
+          <Calendar class="h-3 w-3 text-cyan-400" />
+          <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+        </span>
+        <span class="inline-flex items-center gap-1">
+          <Clock class="h-3 w-3 text-violet-400" />
+          <span>{readTime}</span>
+        </span>
+      </div>
+
+      <span class="rounded-md border border-white/10 bg-slate-900/80 px-2 py-0.5 text-cyan-400">
+        {category}
+      </span>
+    </div>
+
+    <!-- Title -->
+    <h3 class="text-xl font-bold tracking-tight text-slate-100 transition-colors group-hover:text-cyan-300">
+      <a href={`/posts/${slug}/`} class="hover:underline">
+        {title}
+      </a>
+    </h3>
+
+    <!-- Description -->
+    <p class="mt-2 text-xs leading-relaxed text-slate-400 line-clamp-2">
+      {description}
+    </p>
+
+    <!-- Tags -->
+    <div class="mt-4 flex flex-wrap gap-1.5">
+      {tags.map((tag) => (
+        <span class="inline-flex items-center gap-1 rounded bg-white/5 px-2 py-0.5 font-mono text-[10px] text-slate-300">
+          <Tag class="h-2.5 w-2.5 text-slate-400" />
+          {tag}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <!-- Read action -->
+  <div class="mt-6 border-t border-white/5 pt-3 flex items-center justify-end">
+    <a
+      href={`/posts/${slug}/`}
+      class="inline-flex items-center gap-1.5 text-xs font-medium text-cyan-400 transition-all group-hover:translate-x-1 group-hover:text-cyan-300"
+    >
+      <span>Đọc bài viết</span>
+      <ArrowRight class="h-3 w-3" />
+    </a>
+  </div>
+</article>

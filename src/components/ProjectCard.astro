@@ -1,0 +1,127 @@
+---
+import { ExternalLink, Github, ArrowRight, Sparkles } from 'lucide-astro';
+
+interface Props {
+  title: string;
+  description: string;
+  tagline?: string;
+  category: string;
+  status: string;
+  techStack: string[];
+  demoUrl?: string;
+  githubUrl?: string;
+  slug: string;
+  featured?: boolean;
+}
+
+const {
+  title,
+  description,
+  tagline,
+  category,
+  status,
+  techStack,
+  demoUrl,
+  githubUrl,
+  slug,
+  featured = false,
+} = Astro.props;
+
+const statusColors: Record<string, string> = {
+  Active: 'border-emerald-500/30 text-emerald-400 bg-emerald-950/40',
+  Completed: 'border-cyan-500/30 text-cyan-400 bg-cyan-950/40',
+  'In Development': 'border-amber-500/30 text-amber-400 bg-amber-950/40',
+  Prototype: 'border-violet-500/30 text-violet-400 bg-violet-950/40',
+};
+
+const badgeClass = statusColors[status] || 'border-slate-500/30 text-slate-400 bg-slate-900/40';
+---
+
+<article class="glass-card group relative flex flex-col justify-between overflow-hidden rounded-2xl p-6">
+  <!-- Glowing subtle corner accent -->
+  <div class="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-cyan-500/10 blur-2xl transition-all duration-500 group-hover:bg-cyan-500/20"></div>
+
+  <div>
+    <!-- Header: Category & Status -->
+    <div class="flex items-center justify-between gap-2 mb-4">
+      <div class="flex items-center gap-2">
+        <span class="rounded-md border border-white/10 bg-slate-900/80 px-2.5 py-0.5 font-mono text-[11px] text-slate-300">
+          {category}
+        </span>
+        {featured && (
+          <span class="inline-flex items-center gap-1 rounded-md border border-cyan-500/30 bg-cyan-950/40 px-2 py-0.5 font-mono text-[10px] text-cyan-300">
+            <Sparkles class="h-2.5 w-2.5" />
+            Featured
+          </span>
+        )}
+      </div>
+      <span class:list={['rounded-md border px-2 py-0.5 font-mono text-[10px]', badgeClass]}>
+        {status}
+      </span>
+    </div>
+
+    <!-- Title & Tagline -->
+    <h3 class="text-xl font-bold tracking-tight text-slate-100 transition-colors group-hover:text-cyan-300">
+      <a href={`/projects/${slug}/`} class="hover:underline">
+        {title}
+      </a>
+    </h3>
+
+    {tagline && (
+      <p class="mt-1 font-mono text-xs text-cyan-400/90 line-clamp-1">
+        {tagline}
+      </p>
+    )}
+
+    <p class="mt-3 text-xs leading-relaxed text-slate-400 line-clamp-3">
+      {description}
+    </p>
+
+    <!-- Tech Stack badges -->
+    <div class="mt-4 flex flex-wrap gap-1.5">
+      {techStack.map((tech) => (
+        <span class="rounded border border-white/5 bg-slate-950/60 px-2 py-0.5 font-mono text-[10px] text-slate-300">
+          {tech}
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <!-- Bottom actions -->
+  <div class="mt-6 flex items-center justify-between border-t border-white/5 pt-4">
+    <div class="flex items-center gap-3">
+      {githubUrl && (
+        <a
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1 text-xs text-slate-400 transition-colors hover:text-cyan-300"
+          aria-label={`Mã nguồn GitHub của ${title}`}
+        >
+          <Github class="h-3.5 w-3.5" />
+          <span class="font-mono text-[11px]">Code</span>
+        </a>
+      )}
+      {demoUrl && (
+        <a
+          href={demoUrl}
+          target={demoUrl.startsWith('http') ? '_blank' : undefined}
+          rel={demoUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+          class="inline-flex items-center gap-1 text-xs text-cyan-400 transition-colors hover:text-cyan-300"
+          aria-label={`Xem demo trực tiếp của ${title}`}
+        >
+          <ExternalLink class="h-3.5 w-3.5" />
+          <span class="font-mono text-[11px]">Demo</span>
+        </a>
+      )}
+    </div>
+
+    <a
+      href={`/projects/${slug}/`}
+      class="inline-flex items-center gap-1 text-xs font-medium text-slate-300 transition-all group-hover:translate-x-0.5 group-hover:text-cyan-300"
+    >
+      <span>Chi tiết</span>
+      <ArrowRight class="h-3 w-3" />
+    </a>
+  </div>
+</article>

@@ -1,0 +1,154 @@
+---
+interface Props {
+  fullScreen?: boolean;
+}
+
+const { fullScreen = false } = Astro.props;
+---
+
+<div class:list={['pointer-events-none select-none overflow-hidden', fullScreen ? 'fixed inset-0 z-0' : 'absolute inset-0 z-0']}>
+  <canvas id="neural-bg-canvas" class="w-full h-full opacity-60"></canvas>
+  <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#06080e]/50 to-[#06080e]"></div>
+</div>
+
+<script>
+  function initNeuralCanvas() {
+    const canvas = document.getElementById('neural-bg-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Respect prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
+    let height = (canvas.height = canvas.parentElement?.clientHeight || window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      if (!canvas) return;
+      width = canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
+      height = canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+    });
+
+    const isMobile = window.innerWidth < 768;
+    const particleCount = isMobile ? 24 : 45;
+    const maxDistance = isMobile ? 90 : 130;
+
+    interface Particle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      radius: number;
+      color: string;
+    }
+
+    const particles: Particle[] = [];
+    const colors = ['#22d3ee', '#38bdf8', '#818cf8', '#a855f7'];
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.45,
+        vy: (Math.random() - 0.5) * 0.45,
+        radius: Math.random() * 1.5 + 1,
+        color: colors[Math.floor(Math.random() * colors.length)],
+      });
+    }
+
+    let mouseX = -9999;
+    let mouseY = -9999;
+
+    window.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    });
+
+    window.addEventListener('mouseleave', () => {
+      mouseX = -9999;
+      mouseY = -9999;
+    });
+
+    let isTabVisible = true;
+    document.addEventListener('visibilitychange', () => {
+      isTabVisible = !document.hidden;
+    });
+
+    function draw() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < maxDistance) {
+            const alpha = (1 - dist / maxDistance) * 0.22;
+            ctx.strokeStyle = `rgba(56, 189, 248, ${alpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw and update particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        if (!prefersReducedMotion) {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0) p.x = width;
+          if (p.x > width) p.x = 0;
+          if (p.y < 0) p.y = height;
+          if (p.y > height) p.y = 0;
+
+          // Gentle mouse push
+          const dx = p.x - mouseX;
+          const dy = p.y - mouseY;
+          const mouseDist = Math.sqrt(dx * dx + dy * dy);
+          if (mouseDist < 100 && mouseDist > 0) {
+            const force = (100 - mouseDist) / 100;
+            p.x += (dx / mouseDist) * force * 1.5;
+            p.y += (dy / mouseDist) * force * 1.5;
+          }
+        }
+
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    if (prefersReducedMotion) {
+      draw(); // Draw once for static background
+    } else {
+      function loop() {
+        if (isTabVisible) {
+          draw();
+        }
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    }
+  }
+
+  // Initialize on page load and support Astro page transitions
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNeuralCanvas);
+  } else {
+    initNeuralCanvas();
+  }
+  document.addEventListener('astro:page-load', initNeuralCanvas);
+</script>

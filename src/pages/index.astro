@@ -1,0 +1,269 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NeuralBackground from '../components/Effects/NeuralBackground.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PostCard from '../components/PostCard.astro';
+import { siteConfig } from '../config/site';
+import { getCollection } from 'astro:content';
+import {
+  ArrowRight,
+  Sparkles,
+  Terminal,
+  Code2,
+  Cpu,
+  Zap,
+  ShieldCheck,
+  FolderGit2,
+  BookOpen,
+} from 'lucide-astro';
+
+// Fetch projects
+const allProjects = await getCollection('projects');
+const featuredProjects = allProjects
+  .filter((p) => p.data.featured)
+  .sort((a, b) => (a.data.order || 99) - (b.data.order || 99))
+  .slice(0, 3);
+
+// Fetch posts (filtering out drafts in production)
+const allPosts = await getCollection('posts');
+const latestPosts = allPosts
+  .filter((post) => import.meta.env.DEV || !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 2);
+
+const highlights = [
+  {
+    icon: Zap,
+    title: 'Tối ưu hiệu năng 100/100',
+    description: 'Kiến trúc Static Site Generation (SSG) với Astro, loại bỏ triệt để JavaScript thừa thãi.',
+  },
+  {
+    icon: Cpu,
+    title: 'Trải nghiệm AI trên Client',
+    description: 'Thử nghiệm mô phỏng mạng nơ-ron và công cụ Prompt Engineering trực tiếp trên trình duyệt.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Bảo mật & Tự động CI/CD',
+    description: 'Zero server secrets, quy trình kiểm thử và tự động build triển khai qua GitHub Actions.',
+  },
+];
+---
+
+<BaseLayout
+  title="Home // Futuristic Portfolio"
+  description={siteConfig.author.tagline}
+  currentPath="/"
+>
+  <!-- Hero Section -->
+  <section class="relative min-h-[88vh] flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-16">
+    <NeuralBackground />
+
+    <div class="relative z-10 mx-auto max-w-5xl text-center">
+      <!-- Status Badge -->
+      <div class="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-950/40 px-3.5 py-1 text-xs font-mono text-cyan-300 backdrop-blur-md mb-8">
+        <span class="relative flex h-2 w-2">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75"></span>
+          <span class="relative inline-flex h-2 w-2 rounded-full bg-cyan-500"></span>
+        </span>
+        <span>{siteConfig.author.status}</span>
+      </div>
+
+      <!-- Main Heading with Cyber Gradient -->
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight">
+        Xây dựng tương lai số <br class="hidden sm:inline" />
+        với <span class="text-gradient-cyan">Kiến trúc Web & AI</span>
+      </h1>
+
+      <!-- Intro Subtitle -->
+      <p class="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-slate-300 leading-relaxed font-light">
+        Xin chào, tôi là <span class="font-semibold text-white">{siteConfig.author.name}</span> — {siteConfig.author.role}.
+        Tập trung vào kiến trúc frontend hiệu năng cao, trải nghiệm người dùng tinh tế và các thử nghiệm AI tương tác trên web.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <a
+          href="/projects/"
+          class="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-sky-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-neon-cyan transition-all hover:brightness-110 active:scale-95"
+        >
+          <FolderGit2 class="h-4 w-4" />
+          <span>Khám phá Dự án</span>
+          <ArrowRight class="h-4 w-4 transition-transform group-hover:translate-x-1" />
+        </a>
+
+        <a
+          href="/lab/"
+          class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-slate-900/80 px-6 py-3 text-sm font-semibold text-slate-200 backdrop-blur-md transition-all hover:border-cyan-500/40 hover:text-cyan-300 hover:bg-slate-900"
+        >
+          <Sparkles class="h-4 w-4 text-cyan-400" />
+          <span>Vào AI Playground</span>
+        </a>
+
+        <a
+          href="/contact/"
+          class="inline-flex items-center gap-2 rounded-xl border border-transparent px-5 py-3 text-sm font-medium text-slate-400 transition-colors hover:text-slate-200"
+        >
+          <span>Liên hệ →</span>
+        </a>
+      </div>
+
+      <!-- Tech stack pills strip -->
+      <div class="mt-14 pt-8 border-t border-white/5 flex flex-wrap items-center justify-center gap-2 text-xs font-mono text-slate-400">
+        <span class="text-slate-500">Core Technologies:</span>
+        {['Astro', 'TypeScript', 'Tailwind CSS', 'React', 'Node.js', 'Python', 'Docker', 'Canvas 2D'].map((tech) => (
+          <span class="rounded-lg border border-white/10 bg-slate-900/60 px-2.5 py-1 text-slate-300">
+            {tech}
+          </span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Highlights / Philosophy Section -->
+  <section class="border-y border-white/10 bg-[#070b14]/70 py-16 px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+        {highlights.map((item) => {
+          const Icon = item.icon;
+          return (
+            <div class="glass-card rounded-2xl p-6 relative overflow-hidden group">
+              <div class="flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-950/40 text-cyan-400 mb-4 group-hover:scale-105 transition-transform">
+                <Icon class="h-6 w-6" />
+              </div>
+              <h3 class="text-lg font-bold text-white mb-2">{item.title}</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">{item.description}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Projects Section -->
+  <section class="py-20 px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+        <div>
+          <div class="inline-flex items-center gap-2 text-xs font-mono text-cyan-400 mb-2">
+            <Code2 class="h-4 w-4" />
+            <span>PORTFOLIO SHOWCASE</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Dự án Nổi bật
+          </h2>
+          <p class="mt-2 text-sm text-slate-400 max-w-xl">
+            Các sản phẩm thực nghiệm giải quyết bài toán hiệu năng, giao diện thông minh và kiến trúc phần mềm sạch.
+          </p>
+        </div>
+
+        <a
+          href="/projects/"
+          class="inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+        >
+          <span>Xem tất cả dự án ({allProjects.length})</span>
+          <ArrowRight class="h-4 w-4" />
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {featuredProjects.map((project) => (
+          <ProjectCard
+            title={project.data.title}
+            description={project.data.description}
+            tagline={project.data.tagline}
+            category={project.data.category}
+            status={project.data.status}
+            techStack={project.data.techStack}
+            demoUrl={project.data.demoUrl}
+            githubUrl={project.data.githubUrl}
+            slug={project.id}
+            featured={project.data.featured}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Articles Section -->
+  <section class="border-t border-white/10 bg-[#060911]/80 py-20 px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+        <div>
+          <div class="inline-flex items-center gap-2 text-xs font-mono text-violet-400 mb-2">
+            <BookOpen class="h-4 w-4" />
+            <span>WRITINGS & INSIGHTS</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Bài viết Kỹ thuật Mới nhất
+          </h2>
+          <p class="mt-2 text-sm text-slate-400 max-w-xl">
+            Ghi chép quá trình học tập, tối ưu mã nguồn và khám phá các công nghệ frontend mới.
+          </p>
+        </div>
+
+        <a
+          href="/posts/"
+          class="inline-flex items-center gap-1.5 text-sm font-semibold text-violet-400 hover:text-violet-300 transition-colors"
+        >
+          <span>Tất cả bài viết ({allPosts.filter(p => !p.data.draft).length})</span>
+          <ArrowRight class="h-4 w-4" />
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {latestPosts.map((post) => (
+          <PostCard
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            tags={post.data.tags}
+            category={post.data.category}
+            slug={post.id}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Terminal CTA -->
+  <section class="py-20 px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-4xl">
+      <div class="relative overflow-hidden rounded-3xl border border-cyan-500/30 bg-gradient-to-b from-[#0e1628] to-[#070b14] p-8 sm:p-12 shadow-2xl">
+        <div class="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl"></div>
+
+        <div class="flex items-center gap-2 font-mono text-xs text-cyan-400 mb-4">
+          <Terminal class="h-4 w-4" />
+          <span>NEXUS // READY_TO_COLLABORATE</span>
+        </div>
+
+        <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+          Sẵn sàng cho các cơ hội thực tập & dự án mới
+        </h2>
+
+        <p class="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
+          Bạn đang tìm kiếm một thực tập sinh hoặc lập trình viên đam mê, chú trọng chi tiết kỹ thuật và tinh thần học hỏi cao độ? Hãy kết nối ngay hôm nay.
+        </p>
+
+        <div class="mt-8 flex flex-wrap items-center gap-4">
+          <a
+            href="/contact/"
+            class="inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-neon-cyan transition-all hover:bg-cyan-300"
+          >
+            <span>Gửi lời nhắn / Liên hệ</span>
+            <ArrowRight class="h-4 w-4" />
+          </a>
+
+          <a
+            href={siteConfig.author.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-slate-900/60 px-5 py-3 text-sm font-medium text-slate-200 hover:border-cyan-500/40"
+          >
+            <span>GitHub Profile</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

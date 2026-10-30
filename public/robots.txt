@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mphat291.github.io/sitemap-index.xml

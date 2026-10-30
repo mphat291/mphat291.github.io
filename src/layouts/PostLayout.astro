@@ -1,0 +1,158 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import ReadingProgressBar from '../components/ReadingProgressBar.astro';
+import CodeCopyScript from '../components/CodeCopyScript.astro';
+import { Calendar, Clock, Tag, ArrowLeft, Share2 } from 'lucide-astro';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  tags: string[];
+  category: string;
+  cover?: string;
+  headings?: Heading[];
+}
+
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  tags,
+  category,
+  cover,
+  headings = [],
+} = Astro.props;
+
+const formattedPubDate = new Intl.DateTimeFormat('vi-VN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(pubDate);
+
+const tocHeadings = headings.filter((h) => h.depth <= 3);
+---
+
+<BaseLayout title={title} description={description} image={cover}>
+  <ReadingProgressBar />
+  <CodeCopyScript />
+
+  <article class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Back button -->
+    <div class="mb-8">
+      <a
+        href="/posts/"
+        class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900/60 px-3.5 py-1.5 text-xs font-mono text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-300"
+      >
+        <ArrowLeft class="h-3.5 w-3.5" />
+        <span>Quay lại danh sách bài viết</span>
+      </a>
+    </div>
+
+    <!-- Article Header -->
+    <header class="border-b border-white/10 pb-8">
+      <div class="flex flex-wrap items-center gap-3 text-xs font-mono text-slate-400 mb-4">
+        <span class="rounded-md border border-cyan-500/30 bg-cyan-950/40 px-2.5 py-0.5 text-cyan-300 font-semibold">
+          {category}
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <Calendar class="h-3.5 w-3.5 text-cyan-400" />
+          <time datetime={pubDate.toISOString()}>{formattedPubDate}</time>
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <Clock class="h-3.5 w-3.5 text-violet-400" />
+          <span>4 phút đọc</span>
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+        {title}
+      </h1>
+
+      <p class="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed font-light">
+        {description}
+      </p>
+
+      <!-- Tags -->
+      <div class="mt-6 flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <span class="inline-flex items-center gap-1 rounded-md border border-white/10 bg-slate-900/60 px-2.5 py-1 font-mono text-xs text-slate-300">
+            <Tag class="h-3 w-3 text-slate-400" />
+            {tag}
+          </span>
+        ))}
+      </div>
+    </header>
+
+    <!-- Table of contents if present -->
+    {tocHeadings.length > 0 && (
+      <nav class="my-8 rounded-2xl border border-white/10 bg-[#0c1220]/70 p-6 backdrop-blur-md">
+        <h2 class="font-mono text-xs font-semibold tracking-wider text-cyan-400 uppercase mb-3">
+          Mục lục bài viết
+        </h2>
+        <ul class="space-y-1.5 text-sm">
+          {tocHeadings.map((h) => (
+            <li class:list={[h.depth === 3 ? 'pl-4' : '']}>
+              <a
+                href={`#${h.slug}`}
+                class="text-slate-300 transition-colors hover:text-cyan-300 hover:underline"
+              >
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+
+    <!-- Main Markdown Prose Content -->
+    <div class="prose-content my-10">
+      <slot />
+    </div>
+
+    <!-- Article Footer / Share bar -->
+    <footer class="mt-12 border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="text-xs text-slate-400 font-mono">
+        {updatedDate ? `Cập nhật lần cuối: ${new Intl.DateTimeFormat('vi-VN').format(updatedDate)}` : 'Đã xác minh nội dung'}
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          id="copy-link-btn"
+          class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900/80 px-3 py-1.5 text-xs font-mono text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-300"
+        >
+          <Share2 class="h-3.5 w-3.5" />
+          <span id="copy-link-text">Sao chép link bài viết</span>
+        </button>
+      </div>
+    </footer>
+  </article>
+
+  <script>
+    const btn = document.getElementById('copy-link-btn');
+    const label = document.getElementById('copy-link-text');
+
+    btn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        if (label) {
+          label.textContent = 'Đã sao chép link!';
+          setTimeout(() => {
+            label.textContent = 'Sao chép link bài viết';
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Lỗi khi sao chép link: ', err);
+      }
+    });
+  </script>
+</BaseLayout>

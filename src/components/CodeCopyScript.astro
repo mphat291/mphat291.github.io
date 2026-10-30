@@ -1,0 +1,58 @@
+---
+// Component injects code block copy buttons
+---
+
+<script>
+  function attachCodeCopyButtons() {
+    const codeBlocks = document.querySelectorAll('.prose-content pre');
+
+    codeBlocks.forEach((pre) => {
+      // Prevent duplicate buttons if already attached
+      if (pre.querySelector('.copy-code-btn')) return;
+
+      // Position relative for absolute button
+      (pre as HTMLElement).style.position = 'relative';
+
+      const button = document.createElement('button');
+      button.className = 'copy-code-btn absolute top-2 right-2 flex items-center gap-1 rounded-md border border-white/10 bg-slate-900/80 px-2 py-1 text-[11px] font-mono text-slate-400 backdrop-blur-sm transition-all hover:border-cyan-500/40 hover:text-slate-100 focus:outline-none';
+      button.setAttribute('aria-label', 'Copy code to clipboard');
+      button.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        <span class="copy-text">Copy</span>
+      `;
+
+      button.addEventListener('click', async () => {
+        const code = pre.querySelector('code');
+        const textToCopy = (code as HTMLElement)?.innerText || (pre as HTMLElement)?.innerText || pre.textContent || '';
+
+        try {
+          await navigator.clipboard.writeText(textToCopy);
+          button.classList.add('border-cyan-400', 'text-cyan-300');
+          button.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="copy-text text-cyan-300">Copied!</span>
+          `;
+
+          setTimeout(() => {
+            button.classList.remove('border-cyan-400', 'text-cyan-300');
+            button.innerHTML = `
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span class="copy-text">Copy</span>
+            `;
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy code: ', err);
+        }
+      });
+
+      pre.appendChild(button);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachCodeCopyButtons);
+  } else {
+    attachCodeCopyButtons();
+  }
+  document.addEventListener('astro:page-load', attachCodeCopyButtons);
+</script>

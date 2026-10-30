@@ -1,0 +1,90 @@
+---
+import { siteConfig } from '../config/site';
+import { ArrowUp, Github, Mail, Linkedin, Terminal } from 'lucide-astro';
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="mt-auto border-t border-white/10 bg-[#04060a] relative z-20">
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3 md:items-center">
+      <!-- Left info -->
+      <div class="flex flex-col space-y-2">
+        <div class="flex items-center gap-2">
+          <span class="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="font-mono text-xs text-slate-300">
+            {siteConfig.author.status}
+          </span>
+        </div>
+        <p class="text-xs text-slate-400 max-w-sm">
+          {siteConfig.author.tagline}
+        </p>
+        <p class="text-[11px] font-mono text-slate-500">
+          © {currentYear} {siteConfig.author.name}. All rights reserved.
+        </p>
+      </div>
+
+      <!-- Center status -->
+      <div class="flex flex-col items-center justify-center space-y-1">
+        <div class="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/20 bg-cyan-950/30 px-3 py-1 text-[11px] font-mono text-cyan-400">
+          <Terminal class="h-3 w-3" />
+          <span>SSG • GitHub Pages Static Hosting</span>
+        </div>
+        <span class="text-[10px] text-slate-400">
+          Zero Server Secrets • 100% Client Security
+        </span>
+      </div>
+
+      <!-- Right socials & Back to top -->
+      <div class="flex flex-col md:items-end space-y-3">
+        <div class="flex items-center gap-3">
+          <a
+            href={siteConfig.author.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="rounded-lg border border-white/10 bg-slate-900/60 p-2 text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
+            aria-label="GitHub Profile"
+          >
+            <Github class="h-4 w-4" />
+          </a>
+          <a
+            href={siteConfig.author.linkedinUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="rounded-lg border border-white/10 bg-slate-900/60 p-2 text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
+            aria-label="LinkedIn Profile"
+          >
+            <Linkedin class="h-4 w-4" />
+          </a>
+          <a
+            href={`mailto:${siteConfig.author.email}`}
+            class="rounded-lg border border-white/10 bg-slate-900/60 p-2 text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-400"
+            aria-label="Gửi Email"
+          >
+            <Mail class="h-4 w-4" />
+          </a>
+          
+          <button
+            type="button"
+            id="back-to-top-btn"
+            class="flex items-center gap-1 rounded-lg border border-white/10 bg-slate-900/60 px-2.5 py-1.5 text-xs font-mono text-slate-400 transition-colors hover:border-cyan-500/40 hover:text-slate-200"
+            aria-label="Cuộn lên đầu trang"
+          >
+            <ArrowUp class="h-3.5 w-3.5" />
+            <span>Top</span>
+          </button>
+        </div>
+
+        <span class="text-[11px] text-slate-400">
+          Built with <span class="text-cyan-400 font-medium">Astro</span> & <span class="text-sky-400 font-medium">Tailwind CSS</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('back-to-top-btn')?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>

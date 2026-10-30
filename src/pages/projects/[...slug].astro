@@ -1,0 +1,144 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CodeCopyScript from '../../components/CodeCopyScript.astro';
+import { getCollection, render } from 'astro:content';
+import {
+  ArrowLeft,
+  ExternalLink,
+  Github,
+  Sparkles,
+} from 'lucide-astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const statusColors: Record<string, string> = {
+  Active: 'border-emerald-500/30 text-emerald-400 bg-emerald-950/40',
+  Completed: 'border-cyan-500/30 text-cyan-400 bg-cyan-950/40',
+  'In Development': 'border-amber-500/30 text-amber-400 bg-amber-950/40',
+  Prototype: 'border-violet-500/30 text-violet-400 bg-violet-950/40',
+};
+
+const badgeClass = statusColors[project.data.status] || 'border-slate-500/30 text-slate-400';
+---
+
+<BaseLayout
+  title={`${project.data.title} // Dự Án`}
+  description={project.data.description}
+  currentPath="/projects/"
+>
+  <CodeCopyScript />
+
+  <article class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Back to projects -->
+    <div class="mb-8">
+      <a
+        href="/projects/"
+        class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900/60 px-3.5 py-1.5 text-xs font-mono text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-300"
+      >
+        <ArrowLeft class="h-3.5 w-3.5" />
+        <span>Quay lại danh mục dự án</span>
+      </a>
+    </div>
+
+    <!-- Project Header -->
+    <header class="border-b border-white/10 pb-8">
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <span class="rounded-md border border-cyan-500/30 bg-cyan-950/40 px-2.5 py-0.5 font-mono text-xs text-cyan-300 font-semibold">
+          {project.data.category}
+        </span>
+        <span class:list={['rounded-md border px-2.5 py-0.5 font-mono text-xs', badgeClass]}>
+          {project.data.status}
+        </span>
+        {project.data.featured && (
+          <span class="inline-flex items-center gap-1 rounded-md border border-violet-500/30 bg-violet-950/40 px-2.5 py-0.5 font-mono text-xs text-violet-300">
+            <Sparkles class="h-3 w-3" />
+            Featured
+          </span>
+        )}
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+        {project.data.title}
+      </h1>
+
+      {project.data.tagline && (
+        <p class="mt-3 font-mono text-sm sm:text-base text-cyan-400">
+          {project.data.tagline}
+        </p>
+      )}
+
+      <p class="mt-4 text-base text-slate-300 leading-relaxed font-light">
+        {project.data.description}
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="mt-8 flex flex-wrap items-center gap-4">
+        {project.data.demoUrl && (
+          <a
+            href={project.data.demoUrl}
+            target={project.data.demoUrl.startsWith('http') ? '_blank' : undefined}
+            rel={project.data.demoUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+            class="inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-5 py-2.5 text-xs font-semibold text-slate-950 shadow-neon-cyan transition-all hover:bg-cyan-300"
+          >
+            <ExternalLink class="h-4 w-4" />
+            <span>Mở Demo / Ứng dụng</span>
+          </a>
+        )}
+
+        {project.data.githubUrl && (
+          <a
+            href={project.data.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-slate-900/80 px-5 py-2.5 text-xs font-semibold text-slate-200 transition-colors hover:border-cyan-500/40 hover:text-cyan-300"
+          >
+            <Github class="h-4 w-4" />
+            <span>Xem Mã Nguồn GitHub</span>
+          </a>
+        )}
+      </div>
+
+      <!-- Tech Stack Badges -->
+      <div class="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center gap-2">
+        <span class="text-xs font-mono text-slate-400 mr-2">Công nghệ:</span>
+        {project.data.techStack.map((tech) => (
+          <span class="rounded-lg border border-white/10 bg-slate-900/80 px-3 py-1 font-mono text-xs text-slate-200">
+            {tech}
+          </span>
+        ))}
+      </div>
+    </header>
+
+    <!-- Markdown Content -->
+    <div class="prose-content my-10">
+      <Content />
+    </div>
+
+    <!-- Bottom navigation -->
+    <div class="mt-14 border-t border-white/10 pt-8 flex items-center justify-between">
+      <a
+        href="/projects/"
+        class="inline-flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-cyan-300 transition-colors"
+      >
+        <ArrowLeft class="h-4 w-4" />
+        <span>Về danh sách dự án</span>
+      </a>
+
+      <a
+        href="/lab/"
+        class="inline-flex items-center gap-2 text-xs font-mono text-cyan-400 hover:text-cyan-300 transition-colors"
+      >
+        <span>Khám phá AI Lab →</span>
+      </a>
+    </div>
+  </article>
+</BaseLayout>

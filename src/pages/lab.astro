@@ -1,0 +1,597 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  Sparkles,
+  Sliders,
+  Cpu,
+  Terminal,
+  ShieldCheck,
+  RotateCcw,
+  Play,
+  Copy,
+} from 'lucide-astro';
+---
+
+<BaseLayout
+  title="AI Playground & Lab // Thử Nghiệm"
+  description="Phòng thí nghiệm tương tác trên trình duyệt: mô phỏng mạng nơ-ron, công cụ Prompt Engineering và giả lập chuỗi suy luận AI."
+  currentPath="/lab/"
+>
+  <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <header class="mb-12 border-b border-white/10 pb-8">
+      <div class="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-950/40 px-3 py-1 font-mono text-xs text-cyan-400 mb-4">
+        <Sparkles class="h-3.5 w-3.5" />
+        <span>BROWSER-ONLY EXPERIMENTAL LAB</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+        Phòng Thí Nghiệm & AI Playground
+      </h1>
+      <p class="mt-3 text-base text-slate-300 max-w-3xl font-light">
+        Nơi thử nghiệm các ý tưởng giao diện tương tác và công cụ xử lý trên trình duyệt. Mọi thuật toán chạy 100% phía client mà không gửi dữ liệu ra máy chủ ngoài.
+      </p>
+
+      <!-- Security Notice Banner -->
+      <div class="mt-6 flex items-start gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-4 text-xs text-slate-300">
+        <ShieldCheck class="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
+        <div>
+          <span class="font-bold text-emerald-300">Cam kết bảo mật & quyền riêng tư:</span> Toàn bộ các demo dưới đây sử dụng JavaScript/Canvas thuần trên thiết bị của bạn. Không yêu cầu API key, không lưu trữ dữ liệu cá nhân, và hoàn toàn miễn phí.
+        </div>
+      </div>
+    </header>
+
+    <!-- Lab Sections Grid -->
+    <div class="space-y-16">
+      <!-- DEMO 1: Interactive Particle & Neural Mesh Simulator -->
+      <section class="glass-panel rounded-3xl p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <div class="inline-flex items-center gap-2 font-mono text-xs text-cyan-400 mb-1">
+              <Cpu class="h-4 w-4" />
+              <span>LAB-01 // PHYSICS & NEURAL SIMULATION</span>
+            </div>
+            <h2 class="text-2xl font-bold text-white">Mô Phỏng Mạng Nơ-ron & Hạt Ánh Sáng</h2>
+            <p class="text-xs text-slate-400 mt-1">
+              Di chuyển con trỏ chuột vào vùng canvas để tương tác lực đẩy/hút giữa các nút mạng.
+            </p>
+          </div>
+
+          <!-- Live stats badge -->
+          <div class="flex items-center gap-3 font-mono text-xs">
+            <span class="rounded-lg border border-white/10 bg-slate-900/80 px-3 py-1.5 text-slate-300">
+              FPS: <span id="lab-fps-display" class="text-emerald-400 font-bold">60</span>
+            </span>
+            <span class="rounded-lg border border-white/10 bg-slate-900/80 px-3 py-1.5 text-slate-300">
+              Connections: <span id="lab-conn-display" class="text-cyan-400 font-bold">0</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="relative w-full h-80 sm:h-96 rounded-2xl border border-white/10 bg-[#04060b] overflow-hidden mb-6">
+          <canvas id="lab-particle-canvas" class="w-full h-full cursor-crosshair"></canvas>
+          <div class="absolute bottom-3 left-4 font-mono text-[10px] text-slate-500 pointer-events-none">
+            Canvas 2D • requestAnimationFrame • Interactive Physics
+          </div>
+        </div>
+
+        <!-- Controls Dashboard -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-2xl border border-white/5 bg-slate-950/60">
+          <div>
+            <label class="block font-mono text-xs text-slate-400 mb-1.5">
+              Số lượng hạt: <span id="particle-count-val" class="text-cyan-400">45</span>
+            </label>
+            <input
+              id="particle-count-slider"
+              type="range"
+              min="20"
+              max="90"
+              value="45"
+              class="w-full accent-cyan-400"
+            />
+          </div>
+
+          <div>
+            <label class="block font-mono text-xs text-slate-400 mb-1.5">
+              Khoảng cách liên kết: <span id="conn-dist-val" class="text-cyan-400">120px</span>
+            </label>
+            <input
+              id="conn-dist-slider"
+              type="range"
+              min="60"
+              max="180"
+              value="120"
+              class="w-full accent-cyan-400"
+            />
+          </div>
+
+          <div>
+            <label class="block font-mono text-xs text-slate-400 mb-1.5">Chế độ tương tác chuột:</label>
+            <select
+              id="mouse-mode-select"
+              class="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-400"
+            >
+              <option value="repel">Đẩy hạt (Repulsion)</option>
+              <option value="attract">Hút hạt (Attraction)</option>
+              <option value="none">Tắt tương tác</option>
+            </select>
+          </div>
+
+          <div class="flex items-end">
+            <button
+              type="button"
+              id="reset-particles-btn"
+              class="w-full inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-xs font-mono text-slate-300 hover:border-cyan-400 hover:text-cyan-300"
+            >
+              <RotateCcw class="h-3.5 w-3.5" />
+              <span>Khởi tạo lại</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- DEMO 2: AI Prompt Studio & Token Estimator -->
+      <section class="glass-panel rounded-3xl p-6 sm:p-8">
+        <div class="mb-6">
+          <div class="inline-flex items-center gap-2 font-mono text-xs text-violet-400 mb-1">
+            <Sliders class="h-4 w-4" />
+            <span>LAB-02 // PROMPT ENGINEERING & TOKEN UTILITY</span>
+          </div>
+          <h2 class="text-2xl font-bold text-white">Công Cụ Thiết Kế Prompt & Ước Tính Token</h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Hỗ trợ chuẩn hóa System Prompt, ước tính dung lượng token và kiểm tra cú pháp JSON đầu ra.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left: Prompt presets and Editor -->
+          <div class="lg:col-span-2 space-y-4">
+            <!-- Presets buttons -->
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-mono text-xs text-slate-400">Mẫu sẵn:</span>
+              <button
+                type="button"
+                class="prompt-preset-btn rounded-lg border border-cyan-500/30 bg-cyan-950/40 px-2.5 py-1 text-xs font-mono text-cyan-300 hover:bg-cyan-900/40"
+                data-preset="code-reviewer"
+              >
+                Code Reviewer
+              </button>
+              <button
+                type="button"
+                class="prompt-preset-btn rounded-lg border border-white/10 bg-slate-900/60 px-2.5 py-1 text-xs font-mono text-slate-300 hover:bg-white/5"
+                data-preset="astro-architect"
+              >
+                Astro Architect
+              </button>
+              <button
+                type="button"
+                class="prompt-preset-btn rounded-lg border border-white/10 bg-slate-900/60 px-2.5 py-1 text-xs font-mono text-slate-300 hover:bg-white/5"
+                data-preset="json-formatter"
+              >
+                JSON Schema Specialist
+              </button>
+            </div>
+
+            <!-- System prompt input -->
+            <div>
+              <label class="block font-mono text-xs text-slate-300 mb-1">System Prompt:</label>
+              <textarea
+                id="system-prompt-text"
+                rows="4"
+                class="w-full rounded-xl border border-white/10 bg-slate-950/80 p-3 text-xs font-mono text-slate-200 placeholder-slate-400 focus:border-cyan-400 focus:outline-none"
+              >Bạn là một Senior Frontend Engineer và chuyên gia tối ưu hiệu năng web. Hãy phân tích mã nguồn được cung cấp, chỉ ra điểm nghẽn hiệu năng (LCP, INP, CLS) và đề xuất phương án cải thiện cụ thể bằng Astro và TypeScript.</textarea>
+            </div>
+
+            <!-- User input -->
+            <div>
+              <label class="block font-mono text-xs text-slate-300 mb-1">User Message / Input:</label>
+              <textarea
+                id="user-prompt-text"
+                rows="3"
+                class="w-full rounded-xl border border-white/10 bg-slate-950/80 p-3 text-xs font-mono text-slate-200 placeholder-slate-400 focus:border-cyan-400 focus:outline-none"
+                placeholder="Nhập câu hỏi hoặc đoạn code mẫu cần thử nghiệm..."
+              >Làm thế nào để tối ưu kích thước bundle JavaScript trong ứng dụng web tĩnh chạy trên GitHub Pages?</textarea>
+            </div>
+          </div>
+
+          <!-- Right: Real-time Stats & Token Counter -->
+          <div class="flex flex-col justify-between rounded-2xl border border-white/10 bg-slate-950/80 p-5">
+            <div>
+              <h3 class="font-mono text-xs font-bold text-slate-300 uppercase tracking-wider mb-4">
+                Thông số phân tích (Live)
+              </h3>
+
+              <div class="space-y-3 font-mono text-xs">
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                  <span class="text-slate-400">Ký tự tổng cộng:</span>
+                  <span id="char-count-disp" class="font-bold text-slate-200">0</span>
+                </div>
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                  <span class="text-slate-400">Số từ:</span>
+                  <span id="word-count-disp" class="font-bold text-slate-200">0</span>
+                </div>
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                  <span class="text-slate-400">Ước tính Token (BPE):</span>
+                  <span id="token-count-disp" class="font-bold text-cyan-400 text-sm">0</span>
+                </div>
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                  <span class="text-slate-400">Context (4K Window):</span>
+                  <span id="context-pct-disp" class="font-bold text-emerald-400">0.0%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <button
+                type="button"
+                id="copy-prompt-btn"
+                class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500/20 border border-cyan-500/30 px-4 py-2.5 text-xs font-mono text-cyan-300 hover:bg-cyan-500/30 transition-all"
+              >
+                <Copy class="h-3.5 w-3.5" />
+                <span id="copy-prompt-label">Sao chép Prompt đầy đủ</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DEMO 3: Simulated AI Agent Reasoning Engine (Chain-of-Thought) -->
+      <section class="glass-panel rounded-3xl p-6 sm:p-8">
+        <div class="mb-6">
+          <div class="inline-flex items-center gap-2 font-mono text-xs text-emerald-400 mb-1">
+            <Terminal class="h-4 w-4" />
+            <span>LAB-03 // CHAIN-OF-THOUGHT SIMULATION</span>
+          </div>
+          <h2 class="text-2xl font-bold text-white">Giả Lập Quy Trình Suy Luận Của AI Agent</h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Quan sát từng giai đoạn phân tích câu hỏi, trích xuất ngữ cảnh và tổng hợp câu trả lời theo thời gian thực.
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Simulation trigger row -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <select
+              id="sim-query-select"
+              class="flex-1 rounded-xl border border-white/10 bg-slate-950 px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-400"
+            >
+              <option value="opt-ssg">Kịch bản 1: Cách tối ưu Static Site Generation trên Astro v5</option>
+              <option value="opt-sec">Kịch bản 2: Giải pháp bảo mật API Key khi host trên GitHub Pages</option>
+              <option value="opt-perf">Kịch bản 3: Tối ưu chỉ số INP và LCP đạt điểm 100 tuyệt đối</option>
+            </select>
+
+            <button
+              type="button"
+              id="start-sim-btn"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 px-6 py-2.5 text-xs font-semibold text-slate-950 shadow-neon-sm hover:brightness-110 active:scale-95"
+            >
+              <Play class="h-4 w-4" />
+              <span>Khởi chạy suy luận</span>
+            </button>
+          </div>
+
+          <!-- Simulation terminal window -->
+          <div class="rounded-2xl border border-white/10 bg-[#060911] p-5 font-mono text-xs">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4 text-[11px] text-slate-500">
+              <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-red-500/80"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-amber-500/80"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-emerald-500/80"></span>
+                <span class="text-slate-400 ml-2">agent_cot_stream.log</span>
+              </div>
+              <span id="sim-status-label" class="text-cyan-400">Trạng thái: Sẵn sàng</span>
+            </div>
+
+            <!-- Streaming log lines -->
+            <div id="sim-log-output" class="space-y-2 min-h-[140px] text-slate-300 leading-relaxed">
+              <p class="text-slate-500 italic">
+                Nhấn "Khởi chạy suy luận" để quan sát chuỗi nơ-ron phân tích dữ liệu...
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  /* ==================== DEMO 1: PARTICLE LAB ==================== */
+  function initLabCanvas() {
+    const canvas = document.getElementById('lab-particle-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let width = (canvas.width = canvas.clientWidth);
+    let height = (canvas.height = canvas.clientHeight);
+
+    window.addEventListener('resize', () => {
+      if (!canvas) return;
+      width = canvas.width = canvas.clientWidth;
+      height = canvas.height = canvas.clientHeight;
+    });
+
+    const countSlider = document.getElementById('particle-count-slider') as HTMLInputElement;
+    const countVal = document.getElementById('particle-count-val');
+    const distSlider = document.getElementById('conn-dist-slider') as HTMLInputElement;
+    const distVal = document.getElementById('conn-dist-val');
+    const mouseSelect = document.getElementById('mouse-mode-select') as HTMLSelectElement;
+    const resetBtn = document.getElementById('reset-particles-btn');
+    const fpsDisp = document.getElementById('lab-fps-display');
+    const connDisp = document.getElementById('lab-conn-display');
+
+    let particleCount = parseInt(countSlider?.value || '45', 10);
+    let maxDistance = parseInt(distSlider?.value || '120', 10);
+    let mouseMode = mouseSelect?.value || 'repel';
+
+    interface Particle {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      radius: number;
+    }
+
+    let particles: Particle[] = [];
+
+    function setupParticles() {
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 1.2,
+          vy: (Math.random() - 0.5) * 1.2,
+          radius: Math.random() * 2 + 1.2,
+        });
+      }
+    }
+
+    setupParticles();
+
+    let mouseX = -9999;
+    let mouseY = -9999;
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      mouseX = -9999;
+      mouseY = -9999;
+    });
+
+    countSlider?.addEventListener('input', () => {
+      particleCount = parseInt(countSlider.value, 10);
+      if (countVal) countVal.textContent = String(particleCount);
+      setupParticles();
+    });
+
+    distSlider?.addEventListener('input', () => {
+      maxDistance = parseInt(distSlider.value, 10);
+      if (distVal) distVal.textContent = `${maxDistance}px`;
+    });
+
+    mouseSelect?.addEventListener('change', () => {
+      mouseMode = mouseSelect.value;
+    });
+
+    resetBtn?.addEventListener('click', setupParticles);
+
+    let lastTime = performance.now();
+    let frameCount = 0;
+    let fps = 60;
+
+    function renderLoop(time: number) {
+      if (!ctx || !canvas) return;
+
+      frameCount++;
+      if (time - lastTime >= 1000) {
+        fps = Math.round((frameCount * 1000) / (time - lastTime));
+        frameCount = 0;
+        lastTime = time;
+        if (fpsDisp) fpsDisp.textContent = String(fps);
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      let connections = 0;
+
+      // Draw connection lines
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < maxDistance) {
+            connections++;
+            const alpha = (1 - dist / maxDistance) * 0.45;
+            ctx.strokeStyle = `rgba(34, 211, 238, ${alpha})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      if (connDisp) connDisp.textContent = String(connections);
+
+      // Move & draw particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        if (mouseMode !== 'none') {
+          const dx = p.x - mouseX;
+          const dy = p.y - mouseY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120 && dist > 0) {
+            const force = (120 - dist) / 120;
+            const factor = mouseMode === 'repel' ? 1.5 : -1.5;
+            p.x += (dx / dist) * force * factor;
+            p.y += (dy / dist) * force * factor;
+          }
+        }
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(renderLoop);
+    }
+
+    requestAnimationFrame(renderLoop);
+  }
+
+  /* ==================== DEMO 2: PROMPT STUDIO ==================== */
+  function initPromptStudio() {
+    const sysPrompt = document.getElementById('system-prompt-text') as HTMLTextAreaElement | null;
+    const userPrompt = document.getElementById('user-prompt-text') as HTMLTextAreaElement | null;
+    const charDisp = document.getElementById('char-count-disp');
+    const wordDisp = document.getElementById('word-count-disp');
+    const tokenDisp = document.getElementById('token-count-disp');
+    const contextDisp = document.getElementById('context-pct-disp');
+    const copyBtn = document.getElementById('copy-prompt-btn');
+    const copyLabel = document.getElementById('copy-prompt-label');
+    const presetBtns = document.querySelectorAll('.prompt-preset-btn');
+
+    const presets: Record<string, { sys: string; user: string }> = {
+      'code-reviewer': {
+        sys: 'Bạn là một Senior Frontend Engineer và chuyên gia tối ưu hiệu năng web. Hãy phân tích mã nguồn được cung cấp, chỉ ra điểm nghẽn hiệu năng (LCP, INP, CLS) và đề xuất phương án cải thiện cụ thể bằng Astro và TypeScript.',
+        user: 'Làm thế nào để tối ưu kích thước bundle JavaScript trong ứng dụng web tĩnh chạy trên GitHub Pages?',
+      },
+      'astro-architect': {
+        sys: 'Bạn là Astro Core Contributor. Hãy hướng dẫn cách cấu hình Astro Content Collections với Zod schema và tối ưu SEO Open Graph metadata cho website tĩnh hoàn chỉnh.',
+        user: 'Hãy viết mẫu cấu hình src/content.config.ts chuẩn cho một blog kỹ thuật có tính năng phân loại tag và bài viết nháp.',
+      },
+      'json-formatter': {
+        sys: 'Bạn là hệ thống trích xuất dữ liệu có cấu trúc. Luôn luôn trả về kết quả dưới định dạng JSON hợp lệ, tuân thủ chặt chẽ schema, không kèm giải thích thừa ngoài block JSON.',
+        user: 'Trích xuất thông tin kỹ năng: TypeScript, Astro, Tailwind, Node.js thành một danh mục JSON.',
+      },
+    };
+
+    function updateCounts() {
+      const text = (sysPrompt?.value || '') + '\n' + (userPrompt?.value || '');
+      const chars = text.length;
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      // Heuristic token estimation: ~4 chars per token for English, ~2.5 for mixed code/Vietnamese
+      const tokens = Math.ceil(chars / 3.4);
+      const contextPct = ((tokens / 4096) * 100).toFixed(1);
+
+      if (charDisp) charDisp.textContent = chars.toLocaleString();
+      if (wordDisp) wordDisp.textContent = words.toLocaleString();
+      if (tokenDisp) tokenDisp.textContent = `~${tokens.toLocaleString()}`;
+      if (contextDisp) contextDisp.textContent = `${contextPct}%`;
+    }
+
+    sysPrompt?.addEventListener('input', updateCounts);
+    userPrompt?.addEventListener('input', updateCounts);
+    updateCounts();
+
+    presetBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-preset');
+        if (key && presets[key] && sysPrompt && userPrompt) {
+          sysPrompt.value = presets[key].sys;
+          userPrompt.value = presets[key].user;
+          updateCounts();
+        }
+      });
+    });
+
+    copyBtn?.addEventListener('click', async () => {
+      const full = `[SYSTEM PROMPT]\n${sysPrompt?.value}\n\n[USER MESSAGE]\n${userPrompt?.value}`;
+      try {
+        await navigator.clipboard.writeText(full);
+        if (copyLabel) {
+          copyLabel.textContent = 'Đã sao chép vào clipboard!';
+          setTimeout(() => {
+            copyLabel.textContent = 'Sao chép Prompt đầy đủ';
+          }, 2000);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  }
+
+  /* ==================== DEMO 3: REASONING SIMULATOR ==================== */
+  function initReasoningSimulator() {
+    const select = document.getElementById('sim-query-select') as HTMLSelectElement | null;
+    const startBtn = document.getElementById('start-sim-btn');
+    const logBox = document.getElementById('sim-log-output');
+    const statusLabel = document.getElementById('sim-status-label');
+
+    const scenarios: Record<string, string[]> = {
+      'opt-ssg': [
+        '🔍 [Phân tích truy vấn]: Nhận diện câu hỏi về SSG trên Astro v5...',
+        '📦 [Kiểm tra kiến trúc]: Phân tích Islands Architecture & Static Output mode (`output: static`)...',
+        '⚡ [Chiến lược tối ưu]: Kích hoạt Content Collections với `glob` loader để build song song...',
+        '📊 [Đánh giá tài nguyên]: HTML tĩnh tạo ra lúc build time, Zero JavaScript cho static pages.',
+        '✅ [Kết luận tổng hợp]: Đạt tốc độ 100/100 Lighthouse, bảo đảm hosting tĩnh hoàn hảo trên GitHub Pages.',
+      ],
+      'opt-sec': [
+        '🔍 [Phân tích truy vấn]: Yêu cầu bảo mật API Key trên GitHub Pages...',
+        '🛡️ [Kiểm tra ranh giới]: Phát hiện GitHub Pages là Static Web Hosting thuần túy...',
+        '⚠️ [Cảnh báo bảo mật]: Client-side JavaScript tuyệt đối không được chứa Secret API Keys.',
+        '🔐 [Giải pháp chuẩn]: Chuyển các tác vụ cần API sang Serverless Functions (Cloudflare Workers / Vercel Serverless) có Secret Management.',
+        '✅ [Kết luận tổng hợp]: Giữ trang portfolio tĩnh 100% độc lập, không rò rỉ bất kỳ token nhạy cảm nào.',
+      ],
+      'opt-perf': [
+        '🔍 [Phân tích truy vấn]: Tối ưu Core Web Vitals (INP, LCP, CLS)...',
+        '⏱️ [LCP Optimization]: Chuyển đổi định dạng ảnh sang WebP/AVIF, preload Inter webfont...',
+        '⚡ [INP Optimization]: Chia nhỏ main thread tasks, hạn chế reflow trong canvas loop...',
+        '📐 [CLS Optimization]: Khai báo rõ aspect-ratio và kích thước khung chứa các thẻ hình ảnh...',
+        '✅ [Kết luận tổng hợp]: Tất cả chỉ số đều nằm trong dải xanh tiêu chuẩn của Google Web Vitals.',
+      ],
+    };
+
+    let isRunning = false;
+
+    startBtn?.addEventListener('click', async () => {
+      if (isRunning || !logBox || !select) return;
+      isRunning = true;
+      if (statusLabel) statusLabel.textContent = 'Trạng thái: Đang suy luận...';
+      logBox.innerHTML = '';
+
+      const lines = scenarios[select.value] || scenarios['opt-ssg'];
+
+      for (let i = 0; i < lines.length; i++) {
+        const p = document.createElement('p');
+        p.className = 'text-cyan-300 font-mono flex items-center gap-2';
+        p.innerHTML = `<span class="text-slate-500 font-bold">${i + 1}.</span> ${lines[i]}`;
+        logBox.appendChild(p);
+        await new Promise((r) => setTimeout(r, 650));
+      }
+
+      if (statusLabel) statusLabel.textContent = 'Trạng thái: Hoàn tất';
+      isRunning = false;
+    });
+  }
+
+  // Run initializers
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initLabCanvas();
+      initPromptStudio();
+      initReasoningSimulator();
+    });
+  } else {
+    initLabCanvas();
+    initPromptStudio();
+    initReasoningSimulator();
+  }
+</script>

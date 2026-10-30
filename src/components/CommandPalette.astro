@@ -1,0 +1,155 @@
+---
+import { siteConfig } from '../config/site';
+import { Search, CornerDownLeft, X } from 'lucide-astro';
+
+const items = [
+  { title: 'Trang chủ (Home)', href: '/', icon: 'Home', section: 'Điều hướng' },
+  { title: 'Về bản thân & Kỹ năng (About)', href: '/about/', icon: 'User', section: 'Điều hướng' },
+  { title: 'Danh mục Dự án (Projects)', href: '/projects/', icon: 'FolderGit2', section: 'Điều hướng' },
+  { title: 'Bài viết & Ghi chú (Posts)', href: '/posts/', icon: 'BookOpen', section: 'Điều hướng' },
+  { title: 'AI Playground & Lab', href: '/lab/', icon: 'Sparkles', section: 'Trải nghiệm' },
+  { title: 'Liên hệ (Contact)', href: '/contact/', icon: 'Mail', section: 'Liên hệ' },
+  { title: 'Xem GitHub Repository', href: siteConfig.author.githubUrl, icon: 'Github', section: 'Liên kết ngoài', external: true },
+];
+---
+
+<div
+  id="cmd-dialog"
+  class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm transition-opacity"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Command Palette"
+>
+  <div class="flex min-h-full items-start justify-center p-4 pt-20 sm:p-6 sm:pt-28">
+    <div
+      id="cmd-container"
+      class="w-full max-w-xl overflow-hidden rounded-2xl border border-white/15 bg-[#090d18] shadow-2xl transition-all"
+    >
+      <!-- Search Input Header -->
+      <div class="relative flex items-center border-b border-white/10 px-4 py-3">
+        <Search class="h-5 w-5 text-cyan-400" />
+        <input
+          id="cmd-search-input"
+          type="text"
+          placeholder="Tìm nhanh trang, dự án hoặc lệnh... (gõ để lọc)"
+          class="w-full bg-transparent px-3 text-sm text-slate-100 placeholder-slate-400 focus:outline-none"
+          autocomplete="off"
+        />
+        <button
+          id="cmd-close-btn"
+          type="button"
+          class="rounded p-1 text-slate-400 hover:bg-white/10 hover:text-white"
+          aria-label="Đóng dialog"
+        >
+          <X class="h-4 w-4" />
+        </button>
+      </div>
+
+      <!-- Results list -->
+      <div id="cmd-list" class="max-h-80 overflow-y-auto p-2 space-y-1">
+        {items.map((item, idx) => (
+          <a
+            href={item.href}
+            target={item.external ? '_blank' : undefined}
+            rel={item.external ? 'noopener noreferrer' : undefined}
+            class="cmd-item group flex items-center justify-between rounded-xl px-3 py-2.5 text-xs text-slate-300 transition-colors hover:bg-cyan-950/50 hover:text-cyan-300 focus:bg-cyan-950/50 focus:text-cyan-300"
+            data-index={idx}
+            data-title={item.title.toLowerCase()}
+          >
+            <div class="flex items-center gap-3">
+              <span class="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-slate-900 group-hover:border-cyan-500/40">
+                <span class="font-mono text-cyan-400">#</span>
+              </span>
+              <div>
+                <p class="font-medium text-slate-200 group-hover:text-cyan-300">{item.title}</p>
+                <p class="text-[11px] text-slate-400">{item.section}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 text-[11px] font-mono text-slate-400 group-hover:text-cyan-400">
+              <span>Mở</span>
+              <CornerDownLeft class="h-3 w-3" />
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Footer tips -->
+      <div class="flex items-center justify-between border-t border-white/10 bg-[#06080e]/90 px-4 py-2.5 text-[11px] text-slate-400">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center gap-1">
+            <kbd class="rounded border border-white/15 bg-white/5 px-1 py-0.5 text-[10px]">↑↓</kbd> để di chuyển
+          </span>
+          <span class="flex items-center gap-1">
+            <kbd class="rounded border border-white/15 bg-white/5 px-1 py-0.5 text-[10px]">↵</kbd> để chọn
+          </span>
+        </div>
+        <span class="flex items-center gap-1">
+          <kbd class="rounded border border-white/15 bg-white/5 px-1 py-0.5 text-[10px]">Esc</kbd> để đóng
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const dialog = document.getElementById('cmd-dialog');
+  const input = document.getElementById('cmd-search-input') as HTMLInputElement | null;
+  const closeBtn = document.getElementById('cmd-close-btn');
+  const container = document.getElementById('cmd-container');
+  const items = Array.from(document.querySelectorAll('.cmd-item')) as HTMLElement[];
+
+  function openPalette() {
+    if (!dialog) return;
+    dialog.classList.remove('hidden');
+    if (input) {
+      input.value = '';
+      filterItems('');
+      input.focus();
+    }
+  }
+
+  function closePalette() {
+    if (!dialog) return;
+    dialog.classList.add('hidden');
+  }
+
+  function filterItems(query: string) {
+    const q = query.toLowerCase().trim();
+    items.forEach((item) => {
+      const title = item.getAttribute('data-title') || '';
+      if (!q || title.includes(q)) {
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+
+  // Keyboard shortcut Ctrl/Cmd + K
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (dialog?.classList.contains('hidden')) {
+        openPalette();
+      } else {
+        closePalette();
+      }
+    } else if (e.key === 'Escape' && !dialog?.classList.contains('hidden')) {
+      e.preventDefault();
+      closePalette();
+    }
+  });
+
+  window.addEventListener('open-command-palette', openPalette);
+  closeBtn?.addEventListener('click', closePalette);
+
+  dialog?.addEventListener('click', (e) => {
+    if (!container?.contains(e.target as Node)) {
+      closePalette();
+    }
+  });
+
+  input?.addEventListener('input', (e) => {
+    filterItems((e.target as HTMLInputElement).value);
+  });
+</script>

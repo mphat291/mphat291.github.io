@@ -1,0 +1,229 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../config/site';
+import {
+  Mail,
+  Github,
+  Linkedin,
+  Copy,
+  Send,
+  MessageSquare,
+  ExternalLink,
+  MapPin,
+  Clock,
+} from 'lucide-astro';
+---
+
+<BaseLayout
+  title="Liên Hệ // Contact"
+  description="Thông tin liên hệ, kết nối mạng xã hội và kênh trao đổi cơ hội cộng tác."
+  currentPath="/contact/"
+>
+  <div class="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <header class="mb-12 border-b border-white/10 pb-8 text-center sm:text-left">
+      <div class="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-950/40 px-3 py-1 font-mono text-xs text-cyan-400 mb-4">
+        <Mail class="h-3.5 w-3.5" />
+        <span>DIRECT CHANNELS</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+        Kết Nối & Trao Đổi Cơ Hội
+      </h1>
+      <p class="mt-3 text-base text-slate-300 max-w-2xl font-light">
+        Tôi luôn sẵn sàng đón nhận các câu hỏi, phản hồi về dự án, cũng như cơ hội thực tập và hợp tác phát triển phần mềm.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column: Contact Methods & Social Cards -->
+      <div class="space-y-6">
+        <!-- Quick Email Copy Card -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-500/30 bg-cyan-950/40 text-cyan-400">
+              <Mail class="h-5 w-5" />
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-white">Email Chính Thức</h2>
+              <p class="text-xs text-slate-400 font-mono">Phản hồi trong 24 giờ</p>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-white/10 bg-slate-950/80 p-3 font-mono text-xs text-slate-200 break-all select-all mb-4">
+            {siteConfig.author.email}
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              id="copy-email-btn"
+              class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500/20 border border-cyan-500/30 py-2.5 px-3 text-xs font-mono text-cyan-300 hover:bg-cyan-500/30 transition-all"
+            >
+              <Copy class="h-3.5 w-3.5" />
+              <span id="copy-email-label">Sao chép Email</span>
+            </button>
+
+            <a
+              href={`mailto:${siteConfig.author.email}`}
+              class="inline-flex items-center justify-center rounded-xl border border-white/10 bg-slate-900 py-2.5 px-3 text-slate-300 hover:text-white hover:border-cyan-400"
+              aria-label="Mở ứng dụng email"
+            >
+              <Send class="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+
+        <!-- Social Profiles Card -->
+        <div class="glass-card rounded-2xl p-6">
+          <h2 class="text-base font-bold text-white mb-4">Hồ Sơ Trực Tuyến</h2>
+
+          <div class="space-y-3">
+            <a
+              href={siteConfig.author.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-between rounded-xl border border-white/10 bg-slate-950/60 p-3 text-xs text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-300"
+            >
+              <div class="flex items-center gap-3">
+                <Github class="h-4 w-4 text-slate-400" />
+                <span class="font-medium">GitHub</span>
+              </div>
+              <ExternalLink class="h-3.5 w-3.5 text-slate-500" />
+            </a>
+
+            <a
+              href={siteConfig.author.linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-between rounded-xl border border-white/10 bg-slate-950/60 p-3 text-xs text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-300"
+            >
+              <div class="flex items-center gap-3">
+                <Linkedin class="h-4 w-4 text-sky-400" />
+                <span class="font-medium">LinkedIn</span>
+              </div>
+              <ExternalLink class="h-3.5 w-3.5 text-slate-500" />
+            </a>
+          </div>
+        </div>
+
+        <!-- Location & Availability Card -->
+        <div class="glass-card rounded-2xl p-6">
+          <div class="space-y-3 font-mono text-xs text-slate-400">
+            <div class="flex items-center gap-2.5">
+              <MapPin class="h-4 w-4 text-cyan-400" />
+              <span>Vị trí: {siteConfig.author.location}</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <Clock class="h-4 w-4 text-violet-400" />
+              <span>Múi giờ: GMT+7 (Asia/Ho_Chi_Minh)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Direct Email Generator Form -->
+      <div class="lg:col-span-2">
+        <div class="glass-card rounded-3xl p-6 sm:p-8">
+          <div class="flex items-center gap-2 text-xs font-mono text-cyan-400 mb-2">
+            <MessageSquare class="h-4 w-4" />
+            <span>SOẠN LỜI NHẮN TRỰC TIẾP</span>
+          </div>
+
+          <h2 class="text-2xl font-bold text-white mb-2">
+            Gửi Tin Nhắn Nhanh Qua Ứng Dụng Thư Điện Tử
+          </h2>
+
+          <p class="text-xs text-slate-400 mb-6">
+            Biểu mẫu bên dưới giúp bạn soạn nhanh nội dung và tạo liên kết trực tiếp tới ứng dụng Email (Gmail, Outlook, Apple Mail) mà không lo thất lạc thông tin.
+          </p>
+
+          <form id="contact-mailto-form" class="space-y-4">
+            <div>
+              <label for="contact-name" class="block font-mono text-xs text-slate-300 mb-1.5">
+                Tên hoặc Đơn vị của bạn:
+              </label>
+              <input
+                id="contact-name"
+                type="text"
+                required
+                placeholder="Ví dụ: Nguyễn Văn A / Công ty XYZ"
+                class="w-full rounded-xl border border-white/10 bg-slate-950 p-3 text-xs text-slate-100 placeholder-slate-400 focus:border-cyan-400 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label for="contact-subject" class="block font-mono text-xs text-slate-300 mb-1.5">
+                Chủ đề trao đổi:
+              </label>
+              <input
+                id="contact-subject"
+                type="text"
+                required
+                placeholder="Ví dụ: Thảo luận cơ hội thực tập / Hợp tác dự án"
+                class="w-full rounded-xl border border-white/10 bg-slate-950 p-3 text-xs text-slate-100 placeholder-slate-400 focus:border-cyan-400 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label for="contact-message" class="block font-mono text-xs text-slate-300 mb-1.5">
+                Nội dung chi tiết:
+              </label>
+              <textarea
+                id="contact-message"
+                rows="5"
+                required
+                placeholder="Xin chào, tôi đã xem qua portfolio của bạn và rất ấn tượng với..."
+                class="w-full rounded-xl border border-white/10 bg-slate-950 p-3 text-xs text-slate-100 placeholder-slate-400 focus:border-cyan-400 focus:outline-none"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-sky-500 px-6 py-3 text-xs font-semibold text-slate-950 shadow-neon-cyan hover:brightness-110 active:scale-95 transition-all"
+            >
+              <Send class="h-4 w-4" />
+              <span>Mở Ứng Dụng Email Để Gửi Thư Ngay</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Copy email with feedback
+  const copyBtn = document.getElementById('copy-email-btn');
+  const copyLabel = document.getElementById('copy-email-label');
+
+  copyBtn?.addEventListener('click', async () => {
+    const email = 'contact@example.com';
+    try {
+      await navigator.clipboard.writeText(email);
+      if (copyLabel) {
+        copyLabel.textContent = 'Đã sao chép!';
+        setTimeout(() => {
+          copyLabel.textContent = 'Sao chép Email';
+        }, 2000);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  // Mailto generator form
+  const form = document.getElementById('contact-mailto-form');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = (document.getElementById('contact-name') as HTMLInputElement)?.value || '';
+    const subject = (document.getElementById('contact-subject') as HTMLInputElement)?.value || '';
+    const message = (document.getElementById('contact-message') as HTMLTextAreaElement)?.value || '';
+
+    const email = 'contact@example.com';
+    const fullSubject = encodeURIComponent(`[Portfolio Contact] ${subject} - Từ ${name}`);
+    const fullBody = encodeURIComponent(`Xin chào Phát,\n\nTôi là ${name}.\n\nNội dung liên hệ:\n${message}\n\nTrân trọng,\n${name}`);
+
+    window.location.href = `mailto:${email}?subject=${fullSubject}&body=${fullBody}`;
+  });
+</script>

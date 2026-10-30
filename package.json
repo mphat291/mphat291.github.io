@@ -1,0 +1,35 @@
+{
+  "name": "mphat291.github.io",
+  "version": "1.0.0",
+  "description": "Personal Portfolio of mphat291 running on GitHub Pages",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mphat291/mphat291.github.io.git"
+  },
+  "keywords": [
+    "portfolio",
+    "astro",
+    "tailwind",
+    "github-pages",
+    "developer"
+  ],
+  "author": "mphat291",
+  "license": "MIT",
+  "dependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@astrojs/sitemap": "^3.7.4",
+    "@astrojs/tailwind": "^6.0.2",
+    "astro": "^7.4.4",
+    "lucide-astro": "^0.556.0",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^6.0.3"
+  }
+}
