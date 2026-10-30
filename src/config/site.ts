@@ -42,15 +42,15 @@ export interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-  siteTitle: 'NEXUS // Portfolio',
+  siteTitle: 'NEXUS Portfolio',
   siteName: 'NEXUS',
   author: {
-    name: '[YOUR_NAME]', // Placeholder: Thay bằng tên thật của bạn (ví dụ: Mai Phát / Nguyễn Văn A)
+    name: 'Mã Triệu Phát',
     role: 'IT Student & Frontend Developer', // Placeholder: Thay đổi theo định hướng nghề nghiệp
     tagline: 'Crafting futuristic, high-performance web applications and exploring AI-driven interfaces.',
     shortBio: 'Sinh viên Công nghệ Thông tin đam mê xây dựng giao diện người dùng trực quan, tối ưu trải nghiệm và khám phá ứng dụng AI trên trình duyệt.',
     location: 'Vietnam',
-    email: 'contact@example.com', // Placeholder: Thay bằng email thật của bạn
+    email: 'maphat2911@gmail.com', // Placeholder: Thay bằng email thật của bạn
     githubUrl: 'https://github.com/mphat291', // URL GitHub của chủ sở hữu
     linkedinUrl: 'https://linkedin.com/in/[YOUR_LINKEDIN]', // Placeholder: Link LinkedIn
     avatarUrl: '/images/avatar.svg',
@@ -136,15 +136,15 @@ export const siteConfig: SiteConfig = {
     {
       year: '2024 - Hiện tại',
       title: 'Sinh viên Công nghệ Thông tin',
-      organization: 'Trường Đại học (Placeholder: [Tên Trường])',
+      organization: 'Trường Đại học Bình Dương - TP.HCM',
       description: 'Tập trung nghiên cứu kỹ thuật phần mềm, cấu trúc dữ liệu giải thuật, kiến trúc web hiện đại và xây dựng các dự án mã nguồn mở.',
       badge: 'Đang theo học',
     },
     {
       year: '2025',
-      title: 'Thực hành Fullstack & Astro Framework',
+      title: 'Thực hành lập trình web',
       organization: 'Dự án cá nhân & Nhóm',
-      description: 'Chuyên sâu vào Static Site Generation (SSG), tối ưu điểm Lighthouse 100/100 và phát triển giao diện responsive với Tailwind CSS.',
+      description: 'Lập trình các web bán hàng, quản lý quán cà phê, Quản lý CLB.',
       badge: 'Cột mốc kỹ thuật',
     },
     {
